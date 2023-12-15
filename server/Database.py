@@ -34,7 +34,6 @@ class Database:
             print(f"Error al recuperar resultados: {e}")
             return []
 
-
     def check_pokemon_user_association(self, user_id: int, pokemon_id: int) -> bool:
         """Consulta si el id de un Pokémon está asociado al id de un usuario en el Pokedex."""
         query = """
@@ -51,7 +50,7 @@ class Database:
     def get_user_pokemons(self, user_id: int) -> List[Tuple[int, str]]:
         """Consulta los Pokémon que están asociados al id de un usuario en el Pokedex."""
         query = """
-            SELECT id, nombre
+            SELECT imagen_nombre
             FROM Pokemon
             WHERE id IN (
                 SELECT id_pokemon
@@ -71,6 +70,19 @@ class Database:
         params = (user_id, pokemon_id)
         self.execute_query(query=query, params=params)
 
+    def user_by_id(self, user_id: int) -> bool:
+        """Consulta un usuario por su id."""
+        query = """
+            SELECT *
+            FROM Usuario
+            WHERE id = %s;
+        """
+        params = (user_id,)
+        if len(self.fetch_all(query=query, params=params)) > 0:
+            return True
+        else:
+            return False
+        
     def close_connection(self) -> None:
         """Cierra la conexión a la base de datos."""
         self.cur.close()
